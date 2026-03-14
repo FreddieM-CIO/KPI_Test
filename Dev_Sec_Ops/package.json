@@ -1,0 +1,24 @@
+{
+  "name": "dev_sec_ops",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "prestart": "node scripts/ensure-rollup-native.cjs",
+    "start": "vite",
+    "predev": "node scripts/ensure-rollup-native.cjs",
+    "dev": "vite",
+    "prebuild": "node scripts/ensure-rollup-native.cjs",
+    "build": "vite build",
+    "prepreview": "node scripts/ensure-rollup-native.cjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.1",
+    "vite": "^8.0.0"
+  }
+}

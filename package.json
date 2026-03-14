@@ -1,0 +1,10 @@
+{
+  "name": "projects_dev",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix ./Dev_Sec_Ops start",
+    "dev": "npm --prefix ./Dev_Sec_Ops run dev",
+    "build": "npm --prefix ./Dev_Sec_Ops run build",
+    "install:react": "npm --prefix ./Dev_Sec_Ops install"
+  }
+}
