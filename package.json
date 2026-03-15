@@ -5,6 +5,9 @@
     "start": "npm --prefix ./Dev_Sec_Ops start",
     "dev": "npm --prefix ./Dev_Sec_Ops run dev",
     "build": "npm --prefix ./Dev_Sec_Ops run build",
-    "install:react": "npm --prefix ./Dev_Sec_Ops install"
+    "install:react": "npm --prefix ./Dev_Sec_Ops install",
+    "dashboard:install": "npm --prefix ./Dev_Dashboard_Ops install",
+    "dashboard:dev": "npm --prefix ./Dev_Dashboard_Ops run dev",
+    "dashboard:build": "npm --prefix ./Dev_Dashboard_Ops run build"
   }
 }

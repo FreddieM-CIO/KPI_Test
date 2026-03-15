@@ -1,3 +1,24 @@
 {
-    "claudeCode.useTerminal": true
+    "claudeCode.useTerminal": true,
+    "terminal.integrated.defaultProfile.windows": "PowerShell (npm.cmd)",
+    "terminal.integrated.automationProfile.windows": {
+        "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "args": [
+            "-NoProfile",
+            "-NoExit",
+            "-Command",
+            "Set-Alias npm npm.cmd; Set-Alias npx npx.cmd; Set-Alias corepack corepack.cmd"
+        ]
+    },
+    "terminal.integrated.profiles.windows": {
+        "PowerShell (npm.cmd)": {
+            "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-NoExit",
+                "-Command",
+                "Set-Alias npm npm.cmd; Set-Alias npx npx.cmd; Set-Alias corepack corepack.cmd"
+            ]
+        }
+    }
 }
