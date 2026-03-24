@@ -24,6 +24,19 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 $repoRoot = (& git -C $projectRoot rev-parse --show-toplevel).Trim()
 $trackedProjectPath = 'Dev_Test_Ops/kpi-dashboard/package.json'
 
+function Test-IsAncestor {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$OlderBranch,
+
+    [Parameter(Mandatory = $true)]
+    [string]$NewerBranch
+  )
+
+  & git -C $repoRoot merge-base --is-ancestor $OlderBranch $NewerBranch
+  return $LASTEXITCODE -eq 0
+}
+
 $null = cmd /c "git -C ""$repoRoot"" ls-files --error-unmatch -- ""$trackedProjectPath"" 1>nul 2>nul"
 if ($LASTEXITCODE -ne 0) {
   throw "Cannot promote yet: Dev_Test_Ops/kpi-dashboard is not tracked by git in $repoRoot."
@@ -38,6 +51,18 @@ $localBranches = (& git -C $repoRoot branch --format='%(refname:short)').ForEach
 foreach ($branch in @($SourceBranch, $TargetBranch)) {
   if ($localBranches -notcontains $branch) {
     throw "Missing local branch: $branch"
+  }
+}
+
+$sourceContainsTarget = Test-IsAncestor -OlderBranch $TargetBranch -NewerBranch $SourceBranch
+$targetContainsSource = Test-IsAncestor -OlderBranch $SourceBranch -NewerBranch $TargetBranch
+
+if (-not $sourceContainsTarget -and -not $targetContainsSource) {
+  Write-Host "Branches diverged; rebasing $SourceBranch onto $TargetBranch before promotion."
+  & git -C $repoRoot checkout $SourceBranch
+  & git -C $repoRoot rebase $TargetBranch
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to rebase $SourceBranch onto $TargetBranch."
   }
 }
 

@@ -6,6 +6,8 @@
 
 Only fast-forward promotion is supported. That keeps the exact tested commit moving forward without extra merge commits.
 
+If `dev` and `uat` diverge because of environment-version metadata commits, the promotion script now rebases the source branch onto the target branch first so the fast-forward rule still holds.
+
 ## Readiness Check
 Run:
 
