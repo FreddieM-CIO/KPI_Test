@@ -47,6 +47,10 @@ function isBlankValue(value) {
   return false
 }
 
+function cellValuesDiffer(sourceValue, targetValue) {
+  return JSON.stringify(cloneCellValue(sourceValue)) !== JSON.stringify(cloneCellValue(targetValue))
+}
+
 function getHeaders(sheet) {
   const headers = []
   sheet.getRow(2).eachCell((cell, columnNumber) => {
@@ -110,6 +114,7 @@ async function main() {
   const targetIndex = buildTargetIndex(targetSheet, targetHeaders)
   let appendedRows = 0
   let filledCells = 0
+  let updatedCells = 0
 
   for (let rowNumber = 3; rowNumber <= sourceSheet.rowCount; rowNumber += 1) {
     const sourceRow = sourceSheet.getRow(rowNumber)
@@ -154,13 +159,19 @@ async function main() {
       if (!isBlankValue(sourceCell.value) && isBlankValue(targetCell.value)) {
         copyCell(sourceCell, targetCell)
         filledCells += 1
+        continue
+      }
+
+      if (!isBlankValue(sourceCell.value) && cellValuesDiffer(sourceCell.value, targetCell.value)) {
+        copyCell(sourceCell, targetCell)
+        updatedCells += 1
       }
     }
 
     targetRow.commit()
   }
 
-  if (appendedRows > 0 || filledCells > 0) {
+  if (appendedRows > 0 || filledCells > 0 || updatedCells > 0) {
     await targetWorkbook.xlsx.writeFile(targetWorkbookPath)
   }
 
@@ -170,7 +181,8 @@ async function main() {
       targetWorkbookPath,
       appendedRows,
       filledCells,
-      changed: appendedRows > 0 || filledCells > 0,
+      updatedCells,
+      changed: appendedRows > 0 || filledCells > 0 || updatedCells > 0,
     }),
   )
 }
