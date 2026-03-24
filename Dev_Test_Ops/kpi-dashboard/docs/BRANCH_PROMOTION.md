@@ -8,6 +8,11 @@ Only fast-forward promotion is supported. That keeps the exact tested commit mov
 
 If `dev` and `uat` diverge because of environment-version metadata commits, the promotion script now rebases the source branch onto the target branch first so the fast-forward rule still holds.
 
+Version control is now automatic:
+- every dashboard commit bumps the current environment revision through the git hook
+- every promotion bumps the target environment revision after the fast-forward merge
+- version format is `baseVersion-environment.revision`
+
 ## Readiness Check
 Run:
 
@@ -51,17 +56,9 @@ git commit -m "Sync KPI snapshots from environment workbooks"
 If this release should carry a new version, update `dev` first:
 
 ```powershell
-npm run version:dev -- 1.0.1 "Workbook and dashboard updates"
+npm run version:base -- all 1.0.2 "Workbook and dashboard updates"
 git add Dev_Test_Ops/kpi-dashboard/src/config/environmentVersions.ts
-git commit -m "Set dev release version to 1.0.1"
-```
-
-Before promoting, copy the validated `dev` version into `uat`:
-
-```powershell
-npm run version:promote -- dev uat
-git add Dev_Test_Ops/kpi-dashboard/src/config/environmentVersions.ts
-git commit -m "Promote release version from dev to uat"
+git commit -m "Set base version to 1.0.2"
 ```
 
 Then run:
@@ -71,14 +68,6 @@ powershell -ExecutionPolicy Bypass -File .\scripts\promote-branch.ps1 -SourceBra
 ```
 
 ## Promote UAT To Prod
-Before promoting, copy the signed-off `uat` version into `prod`:
-
-```powershell
-npm run version:promote -- uat prod
-git add Dev_Test_Ops/kpi-dashboard/src/config/environmentVersions.ts
-git commit -m "Promote release version from uat to prod"
-```
-
 Run:
 
 ```powershell
@@ -90,6 +79,13 @@ Run:
 
 ```powershell
 npm run version:show
+```
+
+## Enable Automatic Version Tracking
+Run once in the repo:
+
+```powershell
+npm run hooks:install
 ```
 
 ## Current Repo Note

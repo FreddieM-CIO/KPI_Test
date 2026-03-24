@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+if [ "$KPI_SKIP_VERSION_HOOK" = "1" ]; then
+  exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel)"
+project_path="Dev_Test_Ops/kpi-dashboard"
+version_file="$project_path/src/config/environmentVersions.ts"
+
+if ! git diff --cached --name-only -- "$project_path" | grep -q .; then
+  exit 0
+fi
+
+node_bin="/c/Program Files/nodejs/node.exe"
+version_script="$repo_root/$project_path/scripts/manage-environment-version.mjs"
+
+if [ -x "$node_bin" ]; then
+  "$node_bin" "$version_script" touch-branch "Automatic version update for staged dashboard changes."
+else
+  node "$version_script" touch-branch "Automatic version update for staged dashboard changes."
+fi
+
+git add "$version_file"

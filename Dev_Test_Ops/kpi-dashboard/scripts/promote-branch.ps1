@@ -12,6 +12,12 @@ $ErrorActionPreference = 'Stop'
 $nodePath = 'C:\Program Files\nodejs\node.exe'
 $npmPath = 'C:\Program Files\nodejs\npm.cmd'
 
+$projectRoot = Split-Path -Parent $PSScriptRoot
+$repoRoot = (& git -C $projectRoot rev-parse --show-toplevel).Trim()
+$trackedProjectPath = 'Dev_Test_Ops/kpi-dashboard/package.json'
+$versionFilePath = 'Dev_Test_Ops/kpi-dashboard/src/config/environmentVersions.ts'
+$versionScriptPath = Join-Path $projectRoot 'scripts\manage-environment-version.mjs'
+
 if (
   ($SourceBranch -eq 'dev' -and $TargetBranch -ne 'uat') -or
   ($SourceBranch -eq 'uat' -and $TargetBranch -ne 'main') -or
@@ -20,9 +26,18 @@ if (
   throw "Supported promotions are dev -> uat and uat -> main."
 }
 
-$projectRoot = Split-Path -Parent $PSScriptRoot
-$repoRoot = (& git -C $projectRoot rev-parse --show-toplevel).Trim()
-$trackedProjectPath = 'Dev_Test_Ops/kpi-dashboard/package.json'
+function Get-EnvironmentName {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$Branch
+  )
+
+  if ($Branch -eq 'main') {
+    return 'prod'
+  }
+
+  return $Branch
+}
 
 function Test-IsAncestor {
   param(
@@ -90,6 +105,21 @@ if ($SourceBranch -eq 'dev' -and $TargetBranch -eq 'uat') {
 
 & git -C $repoRoot checkout $TargetBranch
 & git -C $repoRoot merge --ff-only $SourceBranch
+
+$sourceEnvironment = Get-EnvironmentName -Branch $SourceBranch
+$targetEnvironment = Get-EnvironmentName -Branch $TargetBranch
+& $nodePath $versionScriptPath promote $sourceEnvironment $targetEnvironment "Promotion from $SourceBranch to $TargetBranch"
+if ($LASTEXITCODE -ne 0) {
+  throw "Failed to update environment version metadata for $TargetBranch."
+}
+
+$versionChanges = & git -C $repoRoot status --porcelain --untracked-files=no -- $versionFilePath
+if ($versionChanges) {
+  & git -C $repoRoot add -- $versionFilePath
+  $env:KPI_SKIP_VERSION_HOOK = '1'
+  & git -C $repoRoot commit --no-verify -m "Track version update for $TargetBranch promotion"
+  Remove-Item Env:\KPI_SKIP_VERSION_HOOK -ErrorAction SilentlyContinue
+}
 
 Write-Host "Promoted $SourceBranch -> $TargetBranch"
 Write-Host "Next step: push $TargetBranch to origin when ready."

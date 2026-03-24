@@ -14,12 +14,15 @@
 The React app reads the active environment from `VITE_ENVIRONMENT` and shows it in the page header.
 
 ## Environment Version Control
-- Each environment has a tracked release version in `src/config/environmentVersions.ts`
+- Each environment has a tracked version entry in `src/config/environmentVersions.ts`
+- Version format is `baseVersion-environment.revision`
+- Revisions are tied to the git history of `Dev_Test_Ops/kpi-dashboard`
 - The dashboard header shows the active environment version and release date
 - Use `npm run version:show` to inspect the current version map
-- Use `npm run version:dev -- 1.0.1 "notes"` to update `dev`
-- Use `npm run version:promote -- dev uat` to copy the tested `dev` version into `uat`
-- Use `npm run version:promote -- uat prod` to copy the approved `uat` version into `prod`
+- Use `npm run hooks:install` once to enable automatic commit-time versioning
+- Every dashboard commit auto-updates the current environment version through the git pre-commit hook
+- Every promotion auto-updates the target environment version in the promotion script
+- Use `npm run version:base -- all 1.1.0 "Major release"` when you want to change the shared base version intentionally
 
 ## Localhost URLs
 - `dev`: `http://127.0.0.1:4173`
