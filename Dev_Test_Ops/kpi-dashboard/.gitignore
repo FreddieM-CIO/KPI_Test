@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .local-runtime
+.local-worktrees
 .env.dev
 .env.uat
 .env.prod

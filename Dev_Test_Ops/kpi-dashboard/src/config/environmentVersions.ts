@@ -11,10 +11,10 @@ export interface EnvironmentVersionInfo {
 export const environmentVersions: Record<AppEnvironment, EnvironmentVersionInfo> = {
   dev: {
     baseVersion: '1.0.1',
-    revision: 10,
-    version: '1.0.1-dev.10',
+    revision: 11,
+    version: '1.0.1-dev.11',
     updatedAt: '2026-03-23',
-    notes: 'Automatic version update for staged dashboard changes.',
+    notes: 'Isolate local environments by branch worktree.',
   },
   uat: {
     baseVersion: '1.0.1',

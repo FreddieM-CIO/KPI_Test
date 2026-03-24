@@ -33,8 +33,14 @@ The React app reads the active environment from `VITE_ENVIRONMENT` and shows it 
 - `npm run local:dev`
 - `npm run local:uat`
 - `npm run local:prod`
+- `npm run local:prepare-worktrees`
 - `npm run local:start-all`
 - `npm run local:stop-all`
+
+`local:start-all` now prepares detached git worktrees so localhost environments reflect branch state independently:
+- `dev` URL runs from branch tip `dev`
+- `uat` URL runs from branch tip `uat`
+- `prod` URL runs from branch tip `main`
 
 ## Local Preview Commands
 - `npm run build:dev` then `npm run preview:dev` at `http://127.0.0.1:4273`

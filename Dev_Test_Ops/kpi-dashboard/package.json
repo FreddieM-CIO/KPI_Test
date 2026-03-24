@@ -19,6 +19,7 @@
     "preview:prod": "vite preview --host 127.0.0.1 --port 4275 --strictPort",
     "local:start-all": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-local-envs.ps1",
     "local:stop-all": "powershell -ExecutionPolicy Bypass -File .\\scripts\\stop-local-envs.ps1",
+    "local:prepare-worktrees": "powershell -ExecutionPolicy Bypass -File .\\scripts\\ensure-local-worktrees.ps1",
     "hooks:install": "powershell -ExecutionPolicy Bypass -File .\\scripts\\install-git-hooks.ps1",
     "snapshot:sync": "node .\\scripts\\sync-workbook-snapshot.mjs",
     "workbook:sync:uat": "node .\\scripts\\sync-uat-workbook-from-dev.mjs",
