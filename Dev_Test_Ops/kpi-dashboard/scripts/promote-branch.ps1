@@ -27,7 +27,7 @@ if ($LASTEXITCODE -ne 0) {
   throw "Cannot promote yet: Dev_Test_Ops/kpi-dashboard is not tracked by git in $repoRoot."
 }
 
-$status = & git -C $repoRoot status --porcelain
+$status = & git -C $repoRoot status --porcelain --untracked-files=no
 if ($status) {
   throw "Cannot promote with a dirty worktree. Commit or stash changes first."
 }
