@@ -1,4 +1,5 @@
 export default {
+  cacheDir: '.vite-cache',
   test: {
     environment: 'jsdom',
     globals: true,
