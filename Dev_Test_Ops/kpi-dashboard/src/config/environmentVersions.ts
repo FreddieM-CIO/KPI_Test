@@ -18,10 +18,10 @@ export const environmentVersions: Record<AppEnvironment, EnvironmentVersionInfo>
   },
   uat: {
     baseVersion: '1.0.1',
-    revision: 17,
-    version: '1.0.1-uat.17',
+    revision: 18,
+    version: '1.0.1-uat.18',
     updatedAt: '2026-03-23',
-    notes: 'Promotion from dev to uat',
+    notes: 'Sync UAT workbook values from dev',
   },
   prod: {
     baseVersion: '1.0.1',
