@@ -18,8 +18,8 @@ export const environmentVersions: Record<AppEnvironment, EnvironmentVersionInfo>
   },
   uat: {
     baseVersion: '1.0.1',
-    revision: 14,
-    version: '1.0.1-uat.14',
+    revision: 15,
+    version: '1.0.1-uat.15',
     updatedAt: '2026-03-23',
     notes: 'Automatic version update for staged dashboard changes.',
   },
