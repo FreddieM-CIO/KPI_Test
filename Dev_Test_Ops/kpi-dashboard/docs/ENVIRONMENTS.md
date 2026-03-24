@@ -9,8 +9,17 @@
 - `.env.dev`
 - `.env.uat`
 - `.env.prod`
+- `src/config/environmentVersions.ts`
 
 The React app reads the active environment from `VITE_ENVIRONMENT` and shows it in the page header.
+
+## Environment Version Control
+- Each environment has a tracked release version in `src/config/environmentVersions.ts`
+- The dashboard header shows the active environment version and release date
+- Use `npm run version:show` to inspect the current version map
+- Use `npm run version:dev -- 1.0.1 "notes"` to update `dev`
+- Use `npm run version:promote -- dev uat` to copy the tested `dev` version into `uat`
+- Use `npm run version:promote -- uat prod` to copy the approved `uat` version into `prod`
 
 ## Localhost URLs
 - `dev`: `http://127.0.0.1:4173`
@@ -38,9 +47,10 @@ The React app reads the active environment from `VITE_ENVIRONMENT` and shows it 
 ## Promotion Flow
 1. Create feature branches from `dev`.
 2. Open a pull request into `dev` to validate changes in the `dev` environment.
-3. After team review, promote the exact tested commit from `dev` into `uat` with a pull request from `dev` to `uat`.
-4. Business users validate in `uat` and sign off.
-5. Promote the same approved commit from `uat` into `main` for `prod`.
+3. Set or update the `dev` release version after validation.
+4. After team review, copy the `dev` release version into `uat` and promote the exact tested commit from `dev` to `uat`.
+5. Business users validate in `uat` and sign off.
+6. Copy the approved `uat` release version into `prod` and promote the same approved commit from `uat` into `main`.
 
 ## Branch-to-Environment Mapping
 - `dev` branch deploys to `dev`

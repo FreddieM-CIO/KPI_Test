@@ -1,6 +1,7 @@
 import Papa, { type ParseResult } from 'papaparse'
 import { z } from 'zod'
-import { kpiSnapshot, workbookCsvSnapshot } from '../data/kpiSnapshot'
+import { appConfig, type AppEnvironment } from '../config/appConfig'
+import { kpiSnapshots, workbookCsvSnapshots } from '../data/kpiSnapshot'
 import type { KpiCondition, KpiRecord, TrendPoint } from '../types/kpi'
 import { normalizeStatus } from '../utils/kpiRules'
 
@@ -61,8 +62,8 @@ function inferTeam(category: string): { team: string; owner: string } {
   return { team: 'Governance', owner: 'Sam Nguyen' }
 }
 
-export function loadSnapshotKpis(): KpiRecord[] {
-  return kpiSnapshot.map((row) => {
+export function loadSnapshotKpis(environment: AppEnvironment = appConfig.environment): KpiRecord[] {
+  return kpiSnapshots[environment].map((row) => {
     const parsed = snapshotSchema.parse(row)
     return {
       ...parsed,
@@ -72,7 +73,7 @@ export function loadSnapshotKpis(): KpiRecord[] {
 }
 
 export function loadDefaultKpis(): KpiRecord[] {
-  return loadSnapshotKpis()
+  return loadSnapshotKpis(appConfig.environment)
 }
 
 export function parseKpiCsv(csvText: string): KpiRecord[] {
@@ -110,8 +111,8 @@ export function parseKpiCsv(csvText: string): KpiRecord[] {
   })
 }
 
-export function loadWorkbookBridgeData(): KpiRecord[] {
-  return parseKpiCsv(workbookCsvSnapshot)
+export function loadWorkbookBridgeData(environment: AppEnvironment = appConfig.environment): KpiRecord[] {
+  return parseKpiCsv(workbookCsvSnapshots[environment])
 }
 
 export async function fetchLiveWorkbookKpis(): Promise<LiveWorkbookPayload> {

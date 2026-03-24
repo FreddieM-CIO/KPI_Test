@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import ExcelJS from 'exceljs'
 
@@ -12,7 +12,11 @@ const runtimePorts = {
 }
 
 const configDir = fileURLToPath(new URL('.', import.meta.url))
-const workbookPath = path.resolve(configDir, '..', 'KPI_TEST_DASHBOARD.xlsx')
+const defaultWorkbookPaths = {
+  dev: path.resolve(configDir, '..', 'KPI_TEST_DASHBOARD - Dev.xlsx'),
+  uat: path.resolve(configDir, '..', 'KPI_TEST_DASHBOARD - UAT.xlsx'),
+  prod: path.resolve(configDir, '..', 'KPI_TEST_DASHBOARD.xlsx'),
+}
 
 function inferTeam(category) {
   if (category === 'Project Delivery') {
@@ -28,6 +32,17 @@ function inferTeam(category) {
     return { team: 'Architecture', owner: 'Riley Gomez', frequency: 'Monthly' }
   }
   return { team: 'Governance', owner: 'Sam Nguyen', frequency: 'Monthly' }
+}
+
+function resolveWorkbookPath(activeMode, env) {
+  const configuredPath = env.VITE_WORKBOOK_SOURCE_PATH?.trim()
+  if (!configuredPath) {
+    return defaultWorkbookPaths[activeMode]
+  }
+
+  return path.isAbsolute(configuredPath)
+    ? configuredPath
+    : path.resolve(configDir, configuredPath)
 }
 
 function evaluateWorkbookStatus(condition, target, actual) {
@@ -54,7 +69,7 @@ function toHealthStatus(workbookStatus, scorePct) {
   return scorePct >= 95 ? 'On Track' : 'At Risk'
 }
 
-async function readWorkbookRecords() {
+async function readWorkbookRecords(workbookPath) {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(workbookPath)
   const sheet = workbook.worksheets[0]
@@ -114,7 +129,7 @@ async function readWorkbookRecords() {
   }
 }
 
-function devWorkbookPlugin(activeMode) {
+function devWorkbookPlugin(activeMode, workbookPath) {
   return {
     name: 'dev-workbook-live-sync',
     configureServer(server) {
@@ -137,7 +152,7 @@ function devWorkbookPlugin(activeMode) {
 
       server.middlewares.use('/api/dev/workbook-kpis', async (_req, res) => {
         try {
-          const payload = await readWorkbookRecords()
+          const payload = await readWorkbookRecords(workbookPath)
           res.setHeader('Content-Type', 'application/json')
           res.end(JSON.stringify(payload))
         } catch (error) {
@@ -157,9 +172,11 @@ function devWorkbookPlugin(activeMode) {
 export default defineConfig(({ mode }) => {
   const activeMode = mode === 'uat' || mode === 'prod' ? mode : 'dev'
   const ports = runtimePorts[activeMode]
+  const env = loadEnv(mode, configDir, 'VITE_')
+  const workbookPath = resolveWorkbookPath(activeMode, env)
 
   return {
-    plugins: [react(), devWorkbookPlugin(activeMode)],
+    plugins: [react(), devWorkbookPlugin(activeMode, workbookPath)],
     server: {
       host: '127.0.0.1',
       port: ports.server,

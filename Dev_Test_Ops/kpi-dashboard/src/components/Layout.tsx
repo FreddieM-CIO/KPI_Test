@@ -15,9 +15,12 @@ export function Layout() {
           </div>
           <p className="subtitle">Workbook-backed scorecards, trends, and drilldowns for operational KPI tracking.</p>
           <div className="runtime-meta">
+            <span title={appConfig.releaseNotes}>Version: {appConfig.releaseVersion}</span>
+            <span>Released: {appConfig.releaseUpdatedAt}</span>
             <span>Release channel: {appConfig.releaseChannel}</span>
             <span>Refresh cadence: {appConfig.refreshIntervalMinutes} min</span>
-            <span>Source: {appConfig.dataSource}</span>
+            <span>Data mode: {appConfig.dataSource}</span>
+            <span title={appConfig.workbookSourcePath}>Workbook: {appConfig.workbookSourceFile}</span>
           </div>
         </div>
         <nav className="header-nav">

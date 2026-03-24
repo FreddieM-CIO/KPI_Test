@@ -6,8 +6,12 @@ import ExcelJS from 'exceljs'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const projectRoot = path.resolve(__dirname, '..')
-const workbookPath = path.resolve(projectRoot, '..', 'KPI_TEST_DASHBOARD.xlsx')
 const outputPath = path.resolve(projectRoot, 'src', 'data', 'kpiSnapshot.ts')
+const workbookSources = {
+  dev: path.resolve(projectRoot, '..', 'KPI_TEST_DASHBOARD - Dev.xlsx'),
+  uat: path.resolve(projectRoot, '..', 'KPI_TEST_DASHBOARD - UAT.xlsx'),
+  prod: path.resolve(projectRoot, '..', 'KPI_TEST_DASHBOARD.xlsx'),
+}
 
 function inferTeam(category) {
   if (category === 'Project Delivery') {
@@ -33,7 +37,7 @@ function toTemplateLiteralValue(value) {
   return String(value).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
 }
 
-async function readWorkbookRows() {
+async function readWorkbookRows(workbookPath) {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(workbookPath)
   const sheet = workbook.worksheets[0]
@@ -63,25 +67,25 @@ async function readWorkbookRows() {
   return { lastUpdated, rows }
 }
 
-function buildSnapshotFile(lastUpdated, rows) {
+function buildSnapshotSection(rows, lastUpdated) {
   const snapshotObjects = rows.map((row, index) => {
     const context = inferTeam(row.Category)
-    return `  {
-    id: 'kpi-${String(index + 1).padStart(3, '0')}',
-    category: '${escapeSingleQuoted(row.Category)}',
-    kpi: '${escapeSingleQuoted(row.KPI)}',
-    targetDisplay: '${escapeSingleQuoted(row['Target (Display)'])}',
-    targetValue: ${Number(row['Target Value'])},
-    condition: '${escapeSingleQuoted(row.Condition)}',
-    actual: ${Number(row.Actual)},
-    scorePct: ${Number(row['Score (%)'])},
-    workbookStatus: '${escapeSingleQuoted(row.Status)}',
-    notes: '${escapeSingleQuoted(row.Notes ?? '')}',
-    team: '${context.team}',
-    owner: '${context.owner}',
-    frequency: '${context.frequency}',
-    lastUpdated: '${lastUpdated}',
-  }`
+    return `    {
+      id: 'kpi-${String(index + 1).padStart(3, '0')}',
+      category: '${escapeSingleQuoted(row.Category)}',
+      kpi: '${escapeSingleQuoted(row.KPI)}',
+      targetDisplay: '${escapeSingleQuoted(row['Target (Display)'])}',
+      targetValue: ${Number(row['Target Value'])},
+      condition: '${escapeSingleQuoted(row.Condition)}',
+      actual: ${Number(row.Actual)},
+      scorePct: ${Number(row['Score (%)'])},
+      workbookStatus: '${escapeSingleQuoted(row.Status)}',
+      notes: '${escapeSingleQuoted(row.Notes ?? '')}',
+      team: '${context.team}',
+      owner: '${context.owner}',
+      frequency: '${context.frequency}',
+      lastUpdated: '${lastUpdated}',
+    }`
   })
 
   const csvHeader = 'Category,KPI,Target (Display),Target Value,Condition,Actual,Score (%),Status,Notes'
@@ -99,21 +103,56 @@ function buildSnapshotFile(lastUpdated, rows) {
     ].join(','),
   )
 
+  return {
+    snapshot: snapshotObjects.join(',\n'),
+    workbookCsvSnapshot: toTemplateLiteralValue([csvHeader, ...csvRows].join('\n')),
+  }
+}
+
+function buildSnapshotFile(environmentData) {
+  const environments = ['dev', 'uat', 'prod']
+  const snapshotSections = environments
+    .map((environment) => {
+      const { rows, lastUpdated } = environmentData[environment]
+      const section = buildSnapshotSection(rows, lastUpdated)
+      return `  ${environment}: [
+${section.snapshot}
+  ],`
+    })
+    .join('\n')
+
+  const csvSections = environments
+    .map((environment) => {
+      const { rows, lastUpdated } = environmentData[environment]
+      const section = buildSnapshotSection(rows, lastUpdated)
+      return `  ${environment}: \`${section.workbookCsvSnapshot}\`,`
+    })
+    .join('\n')
+
   return `import type { KpiRecord } from '../types/kpi'
 
-export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
-${snapshotObjects.join(',\n')}
-]
+export const kpiSnapshots: Record<'dev' | 'uat' | 'prod', Omit<KpiRecord, 'status'>[]> = {
+${snapshotSections}
+}
 
-export const workbookCsvSnapshot = \`${toTemplateLiteralValue([csvHeader, ...csvRows].join('\n'))}\`
+export const workbookCsvSnapshots: Record<'dev' | 'uat' | 'prod', string> = {
+${csvSections}
+}
 `
 }
 
 async function main() {
-  const { lastUpdated, rows } = await readWorkbookRows()
-  const fileContents = buildSnapshotFile(lastUpdated, rows)
+  const environmentData = {
+    dev: await readWorkbookRows(workbookSources.dev),
+    uat: await readWorkbookRows(workbookSources.uat),
+    prod: await readWorkbookRows(workbookSources.prod),
+  }
+
+  const fileContents = buildSnapshotFile(environmentData)
   await fs.writeFile(outputPath, fileContents, 'utf8')
-  console.log(`Synced ${rows.length} workbook rows into src/data/kpiSnapshot.ts`)
+  console.log(
+    `Synced workbook rows into src/data/kpiSnapshot.ts (dev: ${environmentData.dev.rows.length}, uat: ${environmentData.uat.rows.length}, prod: ${environmentData.prod.rows.length})`,
+  )
 }
 
 await main()
