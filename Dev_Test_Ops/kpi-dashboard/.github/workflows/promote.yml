@@ -1,0 +1,104 @@
+name: Promote
+
+on:
+  push:
+    branches:
+      - dev
+      - uat
+      - main
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: Target environment
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - uat
+          - prod
+      source_ref:
+        description: Branch, tag, or commit SHA to promote
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  resolve-target:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.resolve.outputs.environment }}
+      source_ref: ${{ steps.resolve.outputs.source_ref }}
+    steps:
+      - name: Resolve target environment
+        id: resolve
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.target_environment }}" >> "$GITHUB_OUTPUT"
+            echo "source_ref=${{ inputs.source_ref }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref_name }}" = "dev" ]; then
+            echo "environment=dev" >> "$GITHUB_OUTPUT"
+            echo "source_ref=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref_name }}" = "uat" ]; then
+            echo "environment=uat" >> "$GITHUB_OUTPUT"
+            echo "source_ref=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "environment=prod" >> "$GITHUB_OUTPUT"
+            echo "source_ref=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+  validate-and-build:
+    needs: resolve-target
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve-target.outputs.source_ref }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test:run
+
+      - name: Build target bundle
+        run: npm run build:${{ needs.resolve-target.outputs.environment }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kpi-dashboard-${{ needs.resolve-target.outputs.environment }}
+          path: dist
+
+  deploy:
+    needs:
+      - resolve-target
+      - validate-and-build
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ needs.resolve-target.outputs.environment }}
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: kpi-dashboard-${{ needs.resolve-target.outputs.environment }}
+          path: dist
+
+      - name: Promotion summary
+        run: |
+          echo "Promoted ref ${{ needs.resolve-target.outputs.source_ref }} to ${{ needs.resolve-target.outputs.environment }}."
+          echo "Connect this step to your hosting target (Azure Static Web Apps, S3, App Service, Netlify, etc.)."
+
