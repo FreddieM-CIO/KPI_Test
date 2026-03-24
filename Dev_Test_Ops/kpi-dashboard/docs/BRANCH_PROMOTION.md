@@ -18,7 +18,22 @@ The readiness script verifies:
 - local branches `dev`, `uat`, and `main` exist
 
 ## Promote Dev To UAT
-If any KPI workbook changed, refresh the baked snapshots on `dev` first:
+The promotion now auto-syncs missing KPI workbook data from:
+- `KPI_TEST_DASHBOARD - Dev.xlsx` -> `KPI_TEST_DASHBOARD - UAT.xlsx`
+
+That sync does two things during `dev -> uat`:
+- appends KPI rows that exist in the Dev workbook but not in the UAT workbook
+- fills blank UAT cells when the Dev workbook already has a value for the same `Category + KPI`
+
+After the workbook sync, the promotion script automatically regenerates `src/data/kpiSnapshot.ts` and commits it on `dev` if the baked UAT snapshot changed.
+
+If you want to run only the workbook sync without a promotion:
+
+```powershell
+npm run workbook:sync:uat
+```
+
+If any KPI workbook changed and you want to refresh the baked snapshots manually on `dev` first:
 
 ```powershell
 npm run snapshot:sync

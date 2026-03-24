@@ -20,6 +20,7 @@
     "local:start-all": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-local-envs.ps1",
     "local:stop-all": "powershell -ExecutionPolicy Bypass -File .\\scripts\\stop-local-envs.ps1",
     "snapshot:sync": "node .\\scripts\\sync-workbook-snapshot.mjs",
+    "workbook:sync:uat": "node .\\scripts\\sync-uat-workbook-from-dev.mjs",
     "version:show": "node .\\scripts\\manage-environment-version.mjs show",
     "version:set": "node .\\scripts\\manage-environment-version.mjs set",
     "version:promote": "node .\\scripts\\manage-environment-version.mjs promote",

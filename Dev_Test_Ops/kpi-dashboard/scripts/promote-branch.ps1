@@ -9,6 +9,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$nodePath = 'C:\Program Files\nodejs\node.exe'
+$npmPath = 'C:\Program Files\nodejs\npm.cmd'
 
 if (
   ($SourceBranch -eq 'dev' -and $TargetBranch -ne 'uat') -or
@@ -36,6 +38,28 @@ $localBranches = (& git -C $repoRoot branch --format='%(refname:short)').ForEach
 foreach ($branch in @($SourceBranch, $TargetBranch)) {
   if ($localBranches -notcontains $branch) {
     throw "Missing local branch: $branch"
+  }
+}
+
+if ($SourceBranch -eq 'dev' -and $TargetBranch -eq 'uat') {
+  & git -C $repoRoot checkout $SourceBranch
+
+  & $nodePath (Join-Path $projectRoot 'scripts\sync-uat-workbook-from-dev.mjs')
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to sync missing workbook data from dev to uat."
+  }
+
+  & $npmPath --prefix $projectRoot run snapshot:sync
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to refresh KPI snapshot data after workbook sync."
+  }
+
+  $snapshotChanges = & git -C $repoRoot status --porcelain --untracked-files=no -- Dev_Test_Ops/kpi-dashboard/src/data/kpiSnapshot.ts
+  if ($snapshotChanges) {
+    & git -C $repoRoot add -- Dev_Test_Ops/kpi-dashboard/src/data/kpiSnapshot.ts
+    & git -C $repoRoot commit -m "Sync missing KPI workbook data from dev to uat"
+  } else {
+    Write-Host "No snapshot changes detected after workbook sync."
   }
 }
 

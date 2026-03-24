@@ -8,6 +8,7 @@ import { ValidationBanner } from '../components/ValidationBanner'
 import { CategoryComparisonChart } from '../components/charts/CategoryComparisonChart'
 import { StatusDistributionChart } from '../components/charts/StatusDistributionChart'
 import { TrendChart } from '../components/charts/TrendChart'
+import { appConfig } from '../config/appConfig'
 import { buildTrendSeries } from '../services/kpiData'
 import { useKpiRecords } from '../hooks/useKpiRecords'
 import type { KpiRecord } from '../types/kpi'
@@ -57,6 +58,7 @@ export function DashboardPage() {
     () => Array.from(new Set(records.map((record) => record.category))),
     [records],
   )
+  const scoreLabel = appConfig.environment === 'dev' ? 'Corpoate Score' : 'Average Score'
 
   function setFilters(nextFilters: DashboardFilters) {
     const next = new URLSearchParams()
@@ -96,7 +98,7 @@ export function DashboardPage() {
           <strong>{summary.offTrack}</strong>
         </article>
         <article className="summary-tile">
-          <span>Average Score</span>
+          <span>{scoreLabel}</span>
           <strong>{summary.avgScore}%</strong>
         </article>
       </section>
