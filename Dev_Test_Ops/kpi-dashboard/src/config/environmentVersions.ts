@@ -18,8 +18,8 @@ export const environmentVersions: Record<AppEnvironment, EnvironmentVersionInfo>
     notes: 'Promoted release version 1.0.1 from dev to uat',
   },
   prod: {
-    version: '1.0.0',
+    version: '1.0.1',
     updatedAt: '2026-03-23',
-    notes: 'Current production baseline.',
+    notes: 'Promoted release version 1.0.1 from uat to prod',
   },
 }
