@@ -18,7 +18,15 @@ The readiness script verifies:
 - local branches `dev`, `uat`, and `main` exist
 
 ## Promote Dev To UAT
-Run:
+If the KPI workbook changed, refresh the baked snapshot on `dev` first:
+
+```powershell
+npm run snapshot:sync
+git add Dev_Test_Ops/kpi-dashboard/src/data/kpiSnapshot.ts Dev_Test_Ops/kpi-dashboard/package.json Dev_Test_Ops/kpi-dashboard/scripts/sync-workbook-snapshot.mjs Dev_Test_Ops/kpi-dashboard/docs/BRANCH_PROMOTION.md
+git commit -m "Sync KPI snapshot from workbook"
+```
+
+Then run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\promote-branch.ps1 -SourceBranch dev -TargetBranch uat
@@ -32,5 +40,4 @@ powershell -ExecutionPolicy Bypass -File .\scripts\promote-branch.ps1 -SourceBra
 ```
 
 ## Current Repo Note
-Right now the dashboard lives under `Dev_Test_Ops/kpi-dashboard`, but that path is not yet tracked in the parent repo. Until it is added and committed, branch promotion cannot carry the dashboard changes through git branches.
-
+The dashboard is now tracked in the parent repo and can be promoted through `dev`, `uat`, and `main`.

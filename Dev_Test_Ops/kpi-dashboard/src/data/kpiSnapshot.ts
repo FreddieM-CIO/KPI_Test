@@ -15,7 +15,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'PMO',
     owner: 'Jordan Kim',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-20',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-002',
@@ -31,7 +31,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'PMO',
     owner: 'Jordan Kim',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-20',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-003',
@@ -47,7 +47,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'PMO',
     owner: 'Jordan Kim',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-20',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-004',
@@ -62,8 +62,8 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     notes: '',
     team: 'PMO',
     owner: 'Jordan Kim',
-    frequency: 'Monthly',
-    lastUpdated: '2026-03-01',
+    frequency: 'Weekly',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-005',
@@ -79,7 +79,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Service Desk',
     owner: 'Morgan Lee',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-21',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-006',
@@ -89,13 +89,13 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     targetValue: 4.5,
     condition: '>=',
     actual: 4,
-    scorePct: 88.89,
+    scorePct: 88.88888888888889,
     workbookStatus: 'Not Met',
     notes: '',
     team: 'Service Desk',
     owner: 'Morgan Lee',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-21',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-007',
@@ -111,7 +111,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Service Desk',
     owner: 'Morgan Lee',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-21',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-008',
@@ -127,7 +127,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Service Desk',
     owner: 'Morgan Lee',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-21',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-009',
@@ -137,13 +137,13 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     targetValue: 3,
     condition: '<=',
     actual: 2,
-    scorePct: 66.67,
+    scorePct: 66.66666666666666,
     workbookStatus: 'Met',
     notes: '',
     team: 'Service Desk',
     owner: 'Morgan Lee',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-21',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-010',
@@ -159,7 +159,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Service Desk',
     owner: 'Morgan Lee',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-21',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-011',
@@ -175,7 +175,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Service Desk',
     owner: 'Morgan Lee',
     frequency: 'Weekly',
-    lastUpdated: '2026-03-21',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-012',
@@ -191,7 +191,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Endpoint Ops',
     owner: 'Avery Patel',
     frequency: 'Biweekly',
-    lastUpdated: '2026-03-15',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-013',
@@ -207,7 +207,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Endpoint Ops',
     owner: 'Avery Patel',
     frequency: 'Biweekly',
-    lastUpdated: '2026-03-15',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-014',
@@ -223,7 +223,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Architecture',
     owner: 'Riley Gomez',
     frequency: 'Monthly',
-    lastUpdated: '2026-03-05',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-015',
@@ -239,7 +239,7 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Governance',
     owner: 'Sam Nguyen',
     frequency: 'Monthly',
-    lastUpdated: '2026-03-10',
+    lastUpdated: '2026-03-24',
   },
   {
     id: 'kpi-016',
@@ -255,8 +255,24 @@ export const kpiSnapshot: Omit<KpiRecord, 'status'>[] = [
     team: 'Governance',
     owner: 'Sam Nguyen',
     frequency: 'Monthly',
-    lastUpdated: '2026-03-10',
+    lastUpdated: '2026-03-24',
   },
+  {
+    id: 'kpi-017',
+    category: 'AI Adaption',
+    kpi: 'AI Tools',
+    targetDisplay: '100%',
+    targetValue: 70,
+    condition: '>=',
+    actual: 69,
+    scorePct: 98.57142857142858,
+    workbookStatus: 'Not Met',
+    notes: '',
+    team: 'Governance',
+    owner: 'Sam Nguyen',
+    frequency: 'Monthly',
+    lastUpdated: '2026-03-24',
+  }
 ]
 
 export const workbookCsvSnapshot = `Category,KPI,Target (Display),Target Value,Condition,Actual,Score (%),Status,Notes
@@ -265,15 +281,15 @@ Project Delivery,Weekly project update submitted by end of week,100%,100,>=,10,1
 Project Delivery,Project hardware/software inventory updates logged within 24 hrs,100%,100,>=,10,10,Not Met,
 Project Delivery,Efficiency improvements/automation suggestions implemented per month,≥ 2,2,>=,25,1250,Met,
 Support Performance,Support tickets responded to within SLA,≥ 95%,95,>=,95,100,Met,
-Support Performance,CSAT rating (post-ticket),≥ 4.5/5,4.5,>=,4,88.89,Not Met,
+Support Performance,CSAT rating (post-ticket),≥ 4.5/5,4.5,>=,4,88.88888888888889,Not Met,
 Support Performance,Tickets resolved within SLA timelines,≥ 90%,90,>=,90,100,Met,
 Support Performance,Tickets documented with full details,100%,100,>=,90,90,Not Met,
-Support Performance,Ticket reopen rate due to incomplete resolution,≤ 3%,3,<=,2,66.67,Met,
+Support Performance,Ticket reopen rate due to incomplete resolution,≤ 3%,3,<=,2,66.66666666666666,Met,
 Support Performance,First-call resolution rate,≥ 80%,80,>=,79,98.75,Not Met,
 Support Performance,Ticket rework/misdiagnosis rate,≤ 5%,5,<=,2,40,Met,
 Asset Management,New laptops deployed within 5 business days,100%,100,>=,99,99,Not Met,
 Asset Management,Asset update report accuracy (biweekly),100%,100,>=,97,97,Not Met,
 Technology & Advisory,Technology impact advisory/recommendations submitted,≥ 1/month,1,>=,2,200,Met,
 Compliance & Reporting,Compliance with IT documentation & audit requirements,100%,100,>=,100,100,Met,
-Compliance & Reporting,Compliance & operational reports submitted on time (monthly),100%,100,>=,100,100,Met,`
-
+Compliance & Reporting,Compliance & operational reports submitted on time (monthly),100%,100,>=,100,100,Met,
+AI Adaption,AI Tools,100%,70,>=,69,98.57142857142858,Not Met,`

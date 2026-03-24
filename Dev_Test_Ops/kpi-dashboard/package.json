@@ -19,6 +19,7 @@
     "preview:prod": "vite preview --host 127.0.0.1 --port 4275 --strictPort",
     "local:start-all": "powershell -ExecutionPolicy Bypass -File .\\scripts\\start-local-envs.ps1",
     "local:stop-all": "powershell -ExecutionPolicy Bypass -File .\\scripts\\stop-local-envs.ps1",
+    "snapshot:sync": "node .\\scripts\\sync-workbook-snapshot.mjs",
     "promote:check": "powershell -ExecutionPolicy Bypass -File .\\scripts\\check-promotion-readiness.ps1",
     "promote:uat": "powershell -ExecutionPolicy Bypass -File .\\scripts\\promote-branch.ps1 -SourceBranch dev -TargetBranch uat",
     "promote:prod": "powershell -ExecutionPolicy Bypass -File .\\scripts\\promote-branch.ps1 -SourceBranch uat -TargetBranch main",
